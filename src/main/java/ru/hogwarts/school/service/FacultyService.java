@@ -1,44 +1,46 @@
 package ru.hogwarts.school.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.model.Faculty;
+import ru.hogwarts.school.model.Student;
+import ru.hogwarts.school.repositorise.FacultyRepository;
 
 import java.util.*;
 
 @Service
 public class FacultyService {
 
-    private long ID = 0;
-    private final Map<Long, Faculty> facultyMap = new HashMap<>();
+    private final FacultyRepository facultyRepository;
 
-    public Faculty createFaculty(String name, String color) {
-        Faculty faculty = new Faculty(ID, name, color);
-        facultyMap.put(ID, faculty);
-        ID++;
-        return faculty;
+    public FacultyService(FacultyRepository facultyRepository) {
+        this.facultyRepository = facultyRepository;
     }
 
-    public Faculty getFaculty(long ID) {
-        return facultyMap.get(ID);
+    public Faculty addFaculty(Faculty faculty) {
+        return facultyRepository.save(faculty);
     }
 
-    public Faculty updateFaculty(long ID, String name, String color) {
-        Faculty faculty = new Faculty(ID, name, color);
-        facultyMap.put(ID, faculty);
-        return faculty;
+    public Faculty findFaculty(long id) {
+        return facultyRepository.findById(id).get();
     }
 
-    public Faculty deleteFaculty(long ID) {
-        return facultyMap.remove(ID);
+    public Faculty editFaculty(Faculty faculty) {
+        return facultyRepository.save(faculty);
     }
 
-    public Collection<Faculty> getFacultyFilter(String color) {
-        List<Faculty> facultyList = new ArrayList<>();
-        for (int i = 0; i < facultyMap.size(); i++) {
-            if (Objects.equals(facultyMap.get(i).getColor(), color)) {
-                facultyList.add(facultyMap.get(i));
+    public void deleteFaculty(long id) {
+        facultyRepository.deleteById(id);
+    }
+
+    public Collection<Faculty> findByColor(String color) {
+        ArrayList<Faculty> result;
+        result = (ArrayList<Faculty>) facultyRepository.findAll();
+        for (int i = 0; i < result.size(); i++) {
+            if (!Objects.equals(result.get(i).getColor(), color)) {
+                result.remove(i);
             }
         }
-        return facultyList;
+        return result;
     }
 }

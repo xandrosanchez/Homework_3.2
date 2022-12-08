@@ -1,44 +1,45 @@
 package ru.hogwarts.school.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.model.Student;
+import ru.hogwarts.school.repositorise.StudentRepository;
 
 import java.util.*;
 
 @Service
 public class StudentService {
 
-    private long ID = 0;
-    private final Map<Long, Student> studentMap = new HashMap<>();
+    private final StudentRepository studentRepository;
 
-    public Student createStudent(String name, int age) {
-        Student student = new Student(ID, name, age);
-        studentMap.put(ID, student);
-        ID++;
-        return student;
+    public StudentService(StudentRepository studentRepository) {
+        this.studentRepository = studentRepository;
     }
 
-    public Student getStudent(long ID) {
-        return studentMap.get(ID);
+    public Student addStudent(Student student) {
+        return studentRepository.save(student);
     }
 
-    public Student updateStudent(long ID, String name, int age) {
-        Student student = new Student(ID, name, age);
-        studentMap.put(ID, student);
-        return student;
+    public Student findStudent(long id) {
+        return studentRepository.findById(id).get();
     }
 
-    public Student deleteStudent(long ID) {
-        return studentMap.remove(ID);
+    public Student editStudent(Student student) {
+        return studentRepository.save(student);
     }
 
-    public Collection<Student> getFilterStudent(int age) {
-        List<Student> studentList = new ArrayList<>();
-        for (int i = 0; i < studentMap.size(); i++) {
-            if (studentMap.get(i).getAge() == age) {
-                studentList.add(studentMap.get(i));
+    public void deleteStudent(long id) {
+        studentRepository.deleteById(id);
+    }
+
+    public Collection<Student> findByAge(int age) {
+        ArrayList<Student> result;
+        result = (ArrayList<Student>) studentRepository.findAll();
+        for (int i = 0;i < result.size(); i++){
+            if (result.get(i).getAge() != age){
+                result.remove(i);
             }
         }
-        return studentList;
+        return result;
     }
 }
