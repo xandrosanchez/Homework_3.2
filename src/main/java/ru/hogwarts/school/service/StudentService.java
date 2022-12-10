@@ -21,10 +21,13 @@ public class StudentService {
     }
 
     public Student findStudent(long id) {
-        return studentRepository.findById(id).get();
+        return studentRepository.findById(id).orElse(null);
     }
 
     public Student editStudent(Student student) {
+        if (findStudent(student.getId()) == null){
+            return null;
+        }
         return studentRepository.save(student);
     }
 
@@ -33,13 +36,6 @@ public class StudentService {
     }
 
     public Collection<Student> findByAge(int age) {
-        ArrayList<Student> result;
-        result = (ArrayList<Student>) studentRepository.findAll();
-        for (int i = 0;i < result.size(); i++){
-            if (result.get(i).getAge() != age){
-                result.remove(i);
-            }
-        }
-        return result;
+        return studentRepository.findByAge(age);
     }
 }
