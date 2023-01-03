@@ -58,12 +58,12 @@ public class FacultyController {
     }
 
     @GetMapping(params = "nameOrColor")
-    public ResponseEntity<Collection<Faculty>> findFacultiesByColorOrName(@RequestParam String nameOrColor){
+    public ResponseEntity<Collection<Faculty>> findFacultiesByColorOrName(@RequestParam String nameOrColor) {
         return ResponseEntity.ok(facultyService.findFacultiesByColorOrName(nameOrColor));
     }
 
     @GetMapping("/{id}/students")
-    public ResponseEntity<Collection<Student>> getStudentsByFaculty(@PathVariable long id){
+    public ResponseEntity<Collection<Student>> getStudentsByFaculty(@PathVariable long id) {
         return ResponseEntity.ok(facultyService.getStudentsByFaculty(id));
     }
 }

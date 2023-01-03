@@ -1,23 +1,36 @@
 package ru.hogwarts.school.controller;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import ru.hogwarts.school.model.Avatar;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
+import ru.hogwarts.school.service.AvatarService;
 import ru.hogwarts.school.service.StudentService;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
 
 @RestController
-@RequestMapping("/student")
+@RequestMapping("student")
 public class StudentController {
 
     private final StudentService studentService;
+    private final AvatarService avatarService;
 
-    public StudentController(StudentService studentService) {
+    public StudentController(StudentService studentService, AvatarService avatarService) {
         this.studentService = studentService;
+        this.avatarService = avatarService;
     }
 
     @GetMapping("{id}")
@@ -57,7 +70,7 @@ public class StudentController {
         return ResponseEntity.ok(Collections.emptyList());
     }
 
-    @GetMapping(params = {"minAge","maxAge"})
+    @GetMapping(params = {"minAge", "maxAge"})
     public ResponseEntity<Collection<Student>> findByAgeBetween(@RequestParam int minAge, @RequestParam int maxAge) {
         if (minAge > 0 & maxAge > 0) {
             return ResponseEntity.ok(studentService.findByAgeBetween(minAge, maxAge));
@@ -66,7 +79,22 @@ public class StudentController {
     }
 
     @GetMapping("/{id}/students")
-    public ResponseEntity<Faculty> getFacultyByStudent(@PathVariable long id){
+    public ResponseEntity<Faculty> getFacultyByStudent(@PathVariable long id) {
         return ResponseEntity.ok(studentService.getFacultyByStudent(id));
+    }
+
+    @GetMapping(value = "/number-of-students")
+    public ResponseEntity<Integer> getNumberOfStudents() {
+        return ResponseEntity.ok(studentService.getNumberOfStudents());
+    }
+
+    @GetMapping(value = "/avg-age")
+    public ResponseEntity<Integer> getAverageAgeOfStudents() {
+        return ResponseEntity.ok(studentService.getAverageAgeOfStudents());
+    }
+
+    @GetMapping(value = "/5-last-students")
+    public ResponseEntity<Collection<Student>> get5LastStudents() {
+        return ResponseEntity.ok(studentService.get5LastStudents());
     }
 }
